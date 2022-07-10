@@ -1,0 +1,90 @@
+@startuml
+'https://plantuml.com/class-diagram
+class FijacionPrecio {
+Double montoEnDinero
+Grano granoDeCambio
+Double precioPorTonelada
+Double toneladasAEntregar()
+}
+
+class Contrato {
+Cliente partes
+Date vencimiento
+FijacionPrecio fijacionPrecio
+MarcoLegal marco
+List<Descarga> descargas
+void imprimir()
+Boolean fueTotalmenteLiquidado()
+}
+
+class Cliente{
+String nombre
+String documento
+TipoDocumento tipo
+}
+
+enum TipoDocumento {
+CUIT
+CUIL
+}
+
+abstract class MarcoLegal {
+List<String> clausulasPropias
+abstract String enunciarContratoEntrePartes(Cliente cliente)
+abstract String enunciarVencimiento(Date vencimiento)
+abstract String enunciarFijacionDePrecios(FijacionPrecio fijacionPrecio)
+}
+
+class LeyArgentina
+class LeyEuropea
+
+enum Grano {
+MAIZ
+TRIGO
+SOJA
+}
+
+class RepositorioContratos{
+List<Contrato> contratos
+const RepositorioContratos INSTANCE = new RepositorioContratos();
+RepositorioContratos getInstance()
+void asignarDescarga(Descarga descarga)
+}
+
+class Descarga {
+Cliente cliente
+Grano grano
+Double cantidadEntegada
+Boolean liquidada
+}
+
+class EjecutivoDeCuenta {
+String mail
+List<Contrato> contratosEnSeguimiento
+}
+
+interface MailSender{
+void send(String adress, String text)
+}
+
+interface AfipAPI{
+String declarar(Double monto)
+}
+
+interface SapAPI{
+String impactarEnCuenta(Double monto)
+}
+
+Contrato -r-> MarcoLegal
+Contrato -d-> FijacionPrecio
+Contrato -l-> Descarga
+FijacionPrecio -l-> Grano
+LeyArgentina -u-|> MarcoLegal
+LeyEuropea -u-|> MarcoLegal
+Contrato -r-> Cliente
+Cliente -d-> TipoDocumento
+EjecutivoDeCuenta -d->"*" Contrato
+
+RepositorioContratos -d->"*" Contrato
+
+@enduml
